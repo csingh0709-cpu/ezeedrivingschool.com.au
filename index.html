@@ -195,21 +195,17 @@ function render(){
  document.getElementById("bookingService").innerHTML='<option value="">Choose service</option>'+prices.map(p=>`<option>${esc(p.name)}</option>`).join("");
 }
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-async function sha256(value){
- const data=new TextEncoder().encode(value);
- const hash=await crypto.subtle.digest("SHA-256",data);
- return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
-}
-async function loginAdmin(){
- const password=document.getElementById("adminPassword").value;
- const hash=await sha256(password);
- const expected="ba9b10cf8c68eea3c5c29bbcdea515435d0c3037edf21e72c8c8822f22da239e";
- if(hash===expected){
+function loginAdmin(){
+ const password=document.getElementById("adminPassword").value.trim();
+
+ if(password==="ezeeadmin"){
    document.getElementById("adminLogin").classList.add("hidden");
    document.getElementById("adminPanel").classList.remove("hidden");
    renderAdminPrices();
-   renderAdminOffers();
- } else {
+   if(typeof renderAdminOffers==="function") renderAdminOffers();
+   sessionStorage.setItem("ezeeAdminLoggedIn","yes");
+   document.getElementById("adminPassword").value="";
+ }else{
    alert("Incorrect administrator password.");
  }
 }
